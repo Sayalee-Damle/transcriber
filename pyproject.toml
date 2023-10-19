@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "transcriber"
+version = "0.1.0"
+description = ""
+authors = ["SayaleeDamle <sayalee.damle@onepointltd.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+langchain = "^0.0.317"
+openai = "^0.28.1"
+whisper = "^1.1.10"
+pydantic = "^2.4.2"
+python-dotenv = "^1.0.0"
+chainlit = "^0.7.301"
+faiss-cpu = "^1.7.4"
+tiktoken = "^0.5.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

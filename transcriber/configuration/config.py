@@ -21,9 +21,7 @@ class Config:
     )
     verbose_llm = os.getenv("VERBOSE_LLM") == "True"
 
-    python_executor = Path(os.getenv("PYTHON_SCRIPT"))
-    if not python_executor.exists():
-        python_executor.mkdir(exist_ok=True, parents=True)
+    
 
     ui_timeout = os.getenv("REQUEST_TIMEOUT")
 
@@ -36,6 +34,9 @@ class Config:
     transcribed_text = Path(os.getenv("TEXT_FILES_PATH"))
     if not transcribed_text.exists():
         transcribed_text.mkdir(exist_ok=True, parents=True)
+    audio_file_path = Path(os.getenv("AUDIO_FILE"))
+    if not audio_file_path.exists():
+        audio_file_path.mkdir(exist_ok=True, parents=True)
 
 cfg = Config()
 

@@ -11,6 +11,7 @@ from langchain.prompts.chat import (
 from langchain.chains import LLMChain
 from pathlib import Path
 from langchain.schema.messages import HumanMessage
+from asyncer import asyncify
 
 from transcriber.configuration.log_factory import logger
 from transcriber.configuration.config import cfg
@@ -18,7 +19,7 @@ from transcriber.configuration.toml_support import read_prompts_toml
 import transcriber.configuration.templates as t
 prompts = read_prompts_toml()
 
-async def transcribe_from_vid(path: Path) -> dict:
+def transcribe_from_vid(path: Path) -> dict:
     logger.info("in transcribe")
     assert path.exists(), f"path {path} does not exist"
 
@@ -27,6 +28,9 @@ async def transcribe_from_vid(path: Path) -> dict:
     logger.info("in try")
     transcribed_text = result['text']
     return transcribed_text
+
+async def get_transcribed_val(path: Path)-> dict:
+    return await asyncify(transcribe_from_vid)(path)
 
 async def save_text_to_file(text: dict):
     logger.info("in 2nd func")
@@ -53,10 +57,10 @@ def get_better_output(text):
     chain = LLMChain(llm=cfg.llm, prompt=prompt, verbose=cfg.verbose_llm)
     return chain.run({"text": text})
 
-async def document_tool(text, action):
+async def document_tool(text, action, language = "english"):
     prompt = prompt_factory(t.system_message_action, t.human_message_action)
     chain = LLMChain(llm=cfg.llm, prompt=prompt, verbose=cfg.verbose_llm)
-    return await chain.arun({"text": text, "action": action})
+    return await chain.arun({"text": text, "action": action, "lang": language})
 
 if __name__ == "__main__":
     path_aud = Path(f"./recordings/ytmp3free.cc_how-i-learned-python-in-30-days-best-python-course-youtubemp3free.org.mp3")

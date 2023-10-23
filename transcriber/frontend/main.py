@@ -26,7 +26,7 @@ def write_to_disc(file) -> Path:
 @cl.on_chat_start
 async def start() -> cl.Message:
     path_audio = await get_audio()
-    file_transcribed = await transcribe.transcribe_from_vid(path_audio)
+    file_transcribed = await transcribe.get_transcribed_val(path_audio)
     #logger.info(file_transcribed)
     if file_transcribed == Exception:
         await cl.Message(content="try again by restarting").send()
@@ -37,7 +37,7 @@ async def start() -> cl.Message:
                 content="What do you want to do from the following?",
                 actions=[
                     cl.Action(name="Download", value="Download", description="Download"),
-                    cl.Action(name="Summarize", value="Summarize", description="Summarize"),
+                    cl.Action(name="Summarize", value="Summary", description="Summarize"),
                     cl.Action(name="Translate", value="Translate", description="Translate"),
                     cl.Action(name="Other", value="Other", description="Other"),
                     cl.Action(name="Exit", value="Exit", description="Exit"),
@@ -45,13 +45,18 @@ async def start() -> cl.Message:
             ).send()
             action = res["value"]
             if action == "Download":
+                await cl.Message(content="Download").send()
                 await transcribe.save_text_to_file(file_transcribed)
                 await cl.Message(
                     content="File downloaded sucessfully, check in /TranscribedText/"
                 ).send()
-            elif action in ("Summarize", "Translate"):
-                await action_output(file_transcribed, res)
-
+            elif action in ("Summary"):
+                await cl.Message(content="Summarize").send()
+                await action_output(file_transcribed, action)
+            elif action == "Translate":
+                await cl.Message(content="Translate").send()
+                lang = await ask_user_msg("Which language do you want to use?")
+                await action_output(file_transcribed, action, lang)
             elif action == "Exit":
                 await cl.Message(content="Thank You!").send()
                 break
@@ -62,8 +67,8 @@ async def start() -> cl.Message:
                 await action_output(file_transcribed, other_action)
 
 
-async def action_output(file_transcribed, action):
-    output = await transcribe.document_tool(file_transcribed, action)
+async def action_output(file_transcribed, action, language = "english"):
+    output = await transcribe.document_tool(file_transcribed, action, language)
     await cl.Message(content=f"{output}").send()
 
 

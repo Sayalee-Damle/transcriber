@@ -15,5 +15,5 @@ human_message_action = """Given this input that starts with === INPUT START === 
 {text}
 === INPUT END ===
 can you please give the {action} of the text? 
-If the {action} is summary, please restrict it under 200 words.
+if it is translate, use {lang}
 """

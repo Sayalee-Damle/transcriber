@@ -62,6 +62,11 @@ async def document_tool(text, action, language = "english"):
     chain = LLMChain(llm=cfg.llm, prompt=prompt, verbose=cfg.verbose_llm)
     return await chain.arun({"text": text, "action": action, "lang": language})
 
+async def translator(text, lang):
+    prompt = prompt_factory(t.system_message_translator, t.human_message_translator)
+    chain = LLMChain(llm=cfg.llm, prompt=prompt, verbose=cfg.verbose_llm)
+    return await chain.arun({"text": text, "lang": lang})
+
 if __name__ == "__main__":
     path_aud = Path(f"./recordings/ytmp3free.cc_how-i-learned-python-in-30-days-best-python-course-youtubemp3free.org.mp3")
     res = transcribe_from_vid(path_aud)

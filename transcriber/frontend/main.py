@@ -42,21 +42,23 @@ async def start() -> cl.Message:
                     cl.Action(name="Other", value="Other", description="Other"),
                     cl.Action(name="Exit", value="Exit", description="Exit"),
                 ],
+                timeout=cfg.ui_timeout
             ).send()
             action = res["value"]
             if action == "Download":
                 await cl.Message(content="Download").send()
                 await transcribe.save_text_to_file(file_transcribed)
                 await cl.Message(
-                    content="File downloaded sucessfully, check in /TranscribedText/"
+                    content="File downloaded sucessfully, check in the 'TranscribedText' folder created on your Computer"
                 ).send()
             elif action in ("Summary"):
-                await cl.Message(content="Summarize").send()
+                await cl.Message(content="Summary", parent_id=res).send()
                 await action_output(file_transcribed, action)
             elif action == "Translate":
                 await cl.Message(content="Translate").send()
                 lang = await ask_user_msg("Which language do you want to use?")
-                await action_output(file_transcribed, action, lang)
+                output = await transcribe.translator(file_transcribed, lang)
+                await cl.Message(content=f"{output}").send()
             elif action == "Exit":
                 await cl.Message(content="Thank You!").send()
                 break

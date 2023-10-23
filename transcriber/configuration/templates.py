@@ -17,3 +17,8 @@ human_message_action = """Given this input that starts with === INPUT START === 
 can you please give the {action} of the text? 
 if it is translate, use {lang}
 """
+
+system_message_translator = "You are an expert translator"
+human_message_translator = """
+can you please give a good translation for this {text} in the {lang} provided?
+"""

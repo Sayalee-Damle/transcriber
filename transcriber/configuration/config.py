@@ -25,13 +25,8 @@ class Config:
 
     ui_timeout = os.getenv("REQUEST_TIMEOUT")
 
-    image_path = Path(os.getenv("IMAGE_PATH_DISC"))
-    
-    if not image_path.exists():
-        image_path.mkdir(exist_ok=True, parents=True)
-
     project_root = Path(os.getenv("PROJECT_ROOT"))
-    transcribed_text = Path(os.getenv("TEXT_FILES_PATH"))
+    transcribed_text = Path(os.getenv("TEXT_PATH_DISC"))
     if not transcribed_text.exists():
         transcribed_text.mkdir(exist_ok=True, parents=True)
     audio_file_path = Path(os.getenv("AUDIO_FILE"))

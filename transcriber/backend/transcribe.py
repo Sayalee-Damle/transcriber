@@ -24,16 +24,16 @@ async def transcribe_from_vid(path: Path) -> dict:
 
     model = whisper.load_model("base")
     result = model.transcribe(path.as_posix(), fp16=False)
-    return save_text_to_file(result)
+    logger.info("in try")
+    transcribed_text = result['text']
+    return transcribed_text
 
-def save_text_to_file(text: dict):
+async def save_text_to_file(text: dict):
     logger.info("in 2nd func")
     try:
-        transcribed_text = text['text']
-        text_better = get_better_output(transcribed_text)
-        
+        #text_better = get_better_output(transcribed_text)
         with open(cfg.transcribed_text/ f"{uuid.uuid4()}.txt", "w") as file:
-            file.write(text_better)
+            file.write(text)
             logger.info("successful")
             return "success"
     except Exception as e:
@@ -52,6 +52,11 @@ def get_better_output(text):
     prompt = prompt_factory(t.system_message, t.human_message)
     chain = LLMChain(llm=cfg.llm, prompt=prompt, verbose=cfg.verbose_llm)
     return chain.run({"text": text})
+
+async def document_tool(text, action):
+    prompt = prompt_factory(t.system_message_action, t.human_message_action)
+    chain = LLMChain(llm=cfg.llm, prompt=prompt, verbose=cfg.verbose_llm)
+    return await chain.arun({"text": text, "action": action})
 
 if __name__ == "__main__":
     path_aud = Path(f"./recordings/ytmp3free.cc_how-i-learned-python-in-30-days-best-python-course-youtubemp3free.org.mp3")

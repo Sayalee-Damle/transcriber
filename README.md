@@ -24,7 +24,6 @@ configure the .env file might like this:
 ```
 OPENAI_API_KEY= openai api key...
 OPENAI_MODEL = model to be used
-IMAGE_PATH_DISC = /ImagesDall-E/
 PROJECT_ROOT =  root folder of project
 REQUEST_TIMEOUT = 300
 LLM_CACHE = False

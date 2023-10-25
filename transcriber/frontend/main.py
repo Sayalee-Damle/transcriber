@@ -1,3 +1,4 @@
+from asyncer import asyncify
 import chainlit as cl
 from chainlit.types import AskFileResponse
 from pathlib import Path
@@ -27,6 +28,10 @@ def write_to_disc(file) -> Path:
 
 @cl.on_chat_start
 async def start() -> cl.Message:
+    action_download = False
+    action_summary = False
+    logger.info(action_download, action_summary)
+
     path_audio = await get_audio()
     file_transcribed = await transcribe.get_transcribed_val(path_audio)
     # logger.info(file_transcribed)
@@ -36,29 +41,86 @@ async def start() -> cl.Message:
     else:
         await cl.Message(content=f"{file_transcribed}").send()
         while True:
-            res = await cl.AskActionMessage(
-                content="What do you want to do from the following?",
-                actions=[
-                    cl.Action(
-                        name="Download", value="Download", description="Download"
-                    ),
-                    cl.Action(
-                        name="Summarize", value="Summary", description="Summarize"
-                    ),
-                    cl.Action(
-                        name="Translate", value="Translate", description="Translate"
-                    ),
-                    cl.Action(name="Other", value="Other", description="Other"),
-                    cl.Action(name="Exit", value="Exit", description="Exit"),
-                ],
-                timeout=cfg.ui_timeout,
-            ).send()
+            if (action_summary == False and action_download  == False):
+                logger.info("in if")
+                res = await cl.AskActionMessage(
+                    content="What do you want to do from the following?",
+                    actions=[
+                        cl.Action(
+                            name="Download", value="Download", description="Download"
+                        ),
+                        cl.Action(
+                            name="Summarize", value="Summary", description="Summarize"
+                        ),
+                        cl.Action(
+                            name="Translate", value="Translate", description="Translate"
+                        ),
+                        cl.Action(name="Other", value="Other", description="Other"),
+                        cl.Action(name="Exit", value="Exit", description="Exit"),
+                    ],
+                    timeout=cfg.ui_timeout,
+                ).send()
+
+            elif action_summary == True and action_download == False:
+                logger.info("in elif 1")
+                res = await cl.AskActionMessage(
+                    content="What do you want to do from the following?",
+                    actions=[
+                        cl.Action(
+                            name="Download", value="Download", description="Download"
+                        ),
+                        cl.Action(
+                            name="Translate", value="Translate", description="Translate"
+                        ),
+                        cl.Action(name="Other", value="Other", description="Other"),
+                        cl.Action(name="Exit", value="Exit", description="Exit"),
+                    ],
+                    timeout=cfg.ui_timeout,
+                ).send()
+
+            elif action_download == True and action_summary == False:
+                logger.info("in elif 2")
+                res = await cl.AskActionMessage(
+                    content="What do you want to do from the following?",
+                    actions=[
+                        cl.Action(
+                            name="Summarize", value="Summary", description="Summarize"
+                        ),
+                        cl.Action(
+                            name="Translate", value="Translate", description="Translate"
+                        ),
+                        cl.Action(name="Other", value="Other", description="Other"),
+                        cl.Action(name="Exit", value="Exit", description="Exit"),
+                    ],
+                    timeout=cfg.ui_timeout,
+                ).send()
+
+            else:
+                logger.info("in else")
+                res = await cl.AskActionMessage(
+                    content="What do you want to do from the following?",
+                    actions=[
+                        cl.Action(
+                            name="Translate", value="Translate", description="Translate"
+                        ),
+                        cl.Action(name="Other", value="Other", description="Other"),
+                        cl.Action(name="Exit", value="Exit", description="Exit"),
+                    ],
+                    timeout=cfg.ui_timeout,
+                ).send()
+
             action = res["value"]
             if action == "Download":
-                await download_text(file_transcribed)
+                await cl.Message(content="Download").send()
+                action_download = True
+                logger.info(action_download)
+                response = await download_text(file_transcribed)
+                await cl.Message(content=f"{response}").send()
 
-            elif action in ("Summary"):
-                await cl.Message(content="Summary", parent_id=res).send()
+            elif action == "Summary":
+                action_summary = True
+                logger.info(action_summary)
+                await cl.Message(content="Summary").send()
                 output = await action_output(file_transcribed, action)
                 await cl.Message(content=f"{output}").send()
                 download = await ask_user_msg("Do you want to download?")
@@ -77,6 +139,7 @@ async def start() -> cl.Message:
                     await cl.Message(content=f"{response}").send()
 
             elif action == "Exit":
+                await cl.Message(content="Exit").send()
                 await cl.Message(content="Thank You!").send()
                 break
             else:
@@ -92,7 +155,7 @@ async def start() -> cl.Message:
 
 
 async def download_text(file_transcribed):
-    await cl.Message(content="Download").send()
+    
     await transcribe.save_text_to_file(file_transcribed)
     return "File downloaded sucessfully, check in the 'TranscribedText' folder created on your Computer"
 
@@ -106,12 +169,12 @@ async def get_audio():
     files = None
     while files == None:
         files = await cl.AskFileMessage(
-            content="Please upload an audio file to begin!",
+            content="Please upload an audio/video file to begin! The file should be in mp3, mp4 or mpeg format",
             accept=["audio/mpeg", "video/mp4", "video/mpeg"],
             max_files=1,
             max_size_mb=100,
         ).send()
-    path_audio = write_to_disc(files[0])
+    path_audio = await asyncify(write_to_disc)(files[0])
     return path_audio
 
 

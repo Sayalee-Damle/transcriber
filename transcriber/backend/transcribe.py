@@ -32,7 +32,7 @@ def transcribe_from_vid(path: Path) -> dict:
 async def get_transcribed_val(path: Path)-> dict:
     return await asyncify(transcribe_from_vid)(path)
 
-async def save_text_to_file(text: dict):
+async def save_text_to_file(text):
     logger.info("in 2nd func")
     try:
         #text_better = get_better_output(transcribed_text)

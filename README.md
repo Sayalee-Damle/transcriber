@@ -25,12 +25,17 @@ configure the .env file might like this:
 To specify configurations use .env file
 
 ```
-OPENAI_API_KEY= openai api key...
-OPENAI_MODEL = model to be used
-PROJECT_ROOT =  root folder of project
+OPENAI_KEY = openaikey
+OPENAI_MODEL = gpt-3.5-turbo-16k-0613
+CHUNK_SIZE = 1000
+TEXT_PATH_DISC = /TranscribedText/
+PROJECT_ROOT =  C:/Users/Sayalee/Projects/langchain/transcriber/transcriber
 REQUEST_TIMEOUT = 300
 LLM_CACHE = False
 VERBOSE_LLM = True
 TOKEN_LIMIT = 13000
+TEXT_FILES_PATH = /tmp/transcribe/
+AUDIO_FILE = /tmp/audio/
+
 ```
 

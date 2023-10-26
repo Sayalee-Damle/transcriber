@@ -41,13 +41,15 @@ async def start() -> cl.Message:
     else:
         await cl.Message(content=f"{file_transcribed}").send()
         while True:
-            if (action_summary == False and action_download  == False):
+            if action_summary == False and action_download == False:
                 logger.info("in if")
                 res = await cl.AskActionMessage(
-                    content="What do you want to do from the following?",
+                    content="Do you want to do anything from the following?",
                     actions=[
                         cl.Action(
-                            name="Download", value="Download", description="Download"
+                            name="Download The Transcribed text",
+                            value="Download",
+                            description="Download",
                         ),
                         cl.Action(
                             name="Summarize", value="Summary", description="Summarize"
@@ -111,7 +113,7 @@ async def start() -> cl.Message:
 
             action = res["value"]
             if action == "Download":
-                await cl.Message(content="Download").send()
+                await cl.Message(content="Download Transcibed Text").send()
                 action_download = True
                 logger.info(action_download)
                 response = await download_text(file_transcribed)
@@ -123,7 +125,9 @@ async def start() -> cl.Message:
                 await cl.Message(content="Summary").send()
                 output = await action_output(file_transcribed, action)
                 await cl.Message(content=f"{output}").send()
-                download = await ask_user_msg("Do you want to download?")
+                download = await ask_user_msg(
+                    "Do you want to download the text generated above?"
+                )
                 if answer(download) == "positive":
                     response = await download_text(output)
                     await cl.Message(content=f"{response}").send()
@@ -155,7 +159,6 @@ async def start() -> cl.Message:
 
 
 async def download_text(file_transcribed):
-    
     await transcribe.save_text_to_file(file_transcribed)
     return "File downloaded sucessfully, check in the 'TranscribedText' folder created on your Computer"
 

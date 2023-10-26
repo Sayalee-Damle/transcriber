@@ -4,7 +4,6 @@ import os
 from langchain.chat_models import ChatOpenAI
 
 
-
 load_dotenv()
 
 
@@ -21,8 +20,6 @@ class Config:
     )
     verbose_llm = os.getenv("VERBOSE_LLM") == "True"
 
-    
-
     ui_timeout = os.getenv("REQUEST_TIMEOUT")
 
     project_root = Path(os.getenv("PROJECT_ROOT"))
@@ -32,6 +29,7 @@ class Config:
     audio_file_path = Path(os.getenv("AUDIO_FILE"))
     if not audio_file_path.exists():
         audio_file_path.mkdir(exist_ok=True, parents=True)
+
 
 cfg = Config()
 

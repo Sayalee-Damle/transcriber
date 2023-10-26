@@ -1,14 +1,17 @@
-# Welcome to Chainlit! 🚀🤖
+## Welcome to the Transcriber! 🚀🤖
 
-Hi there, Developer! 👋 We're excited to have you on board. Chainlit is a powerful tool designed to help you prototype, debug and share applications built on top of LLMs.
+I have created a small bot for transcribing audio/video files. 
+Now you can see the text version of your audios/videos!!
 
-## Useful Links 🔗
+## Tips to use 
+```You could call these limitations but why be negative? :)
 
-- **Documentation:** Get started with our comprehensive [Chainlit Documentation](https://docs.chainlit.io) 📚
-- **Discord Community:** Join our friendly [Chainlit Discord](https://discord.gg/k73SQ3FyUh) to ask questions, share your projects, and connect with other developers! 💬
+1. The file size should be less than 100 MB for it to run
+2. Use mp3 or mp4 files only
+3. If you upload a file bigger than 10 MB be ready to wait for 5 minutes to get the output. (The server can be bit slow at times)
+4. Keep Patience, you will see the output.
+5. It doesn't work very well with Music files.
+```
 
-We can't wait to see what you create with Chainlit! Happy coding! 💻😊
+### Please let me know if a problem comes up
 
-## Welcome screen
-
-To modify the welcome screen, edit the `chainlit.md` file at the root of your project. If you do not want a welcome screen, just leave this file empty.

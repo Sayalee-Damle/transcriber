@@ -10,11 +10,13 @@ poetry shell
 poetry build
 poetry install
 ```
-
-
-
-
 This creates a specific environment with all the libraries in need!
+
+
+
+## to start the project
+```chainlit run .\transcriber\frontend\main.py```
+
 
 ``` To specify configurations use .env file ```
 

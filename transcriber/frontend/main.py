@@ -30,7 +30,6 @@ def write_to_disc(file) -> Path:
 async def start() -> cl.Message:
     action_download = False
     action_summary = False
-    logger.info(action_download, action_summary)
 
     path_audio = await get_audio()
     file_transcribed = await transcribe.get_transcribed_val(path_audio)

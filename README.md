@@ -18,10 +18,11 @@ This creates a specific environment with all the libraries in need!
 ```chainlit run .\transcriber\frontend\main.py```
 
 
-``` To specify configurations use .env file ```
+
 
 ## Configuration
 configure the .env file might like this:
+To specify configurations use .env file
 
 ```
 OPENAI_API_KEY= openai api key...

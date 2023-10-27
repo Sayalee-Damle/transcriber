@@ -10,12 +10,9 @@ python should be written as "Python" if it is the topic of the video.
 """
 
 system_message_action = "You are an expert document tool, You will perform actions like summarization, translation, finding keywords etc of the given text"
-human_message_action = """Given this input that starts with === INPUT START === and ends with === INPUT END ===
-=== INPUT START ===
+human_message_action = """Given this input that starts with 
 {text}
-=== INPUT END ===
-can you please give the {action} of the text? 
-if it is translate, use {lang}
+can you please perform this action: {action} on the text? 
 """
 
 system_message_translator = "You are an expert translator"

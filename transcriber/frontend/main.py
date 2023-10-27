@@ -42,75 +42,29 @@ async def start() -> cl.Message:
         while True:
             if action_summary == False and action_download == False:
                 logger.info("in if")
-                res = await cl.AskActionMessage(
-                    content="Do you want to do anything from the following?",
-                    actions=[
-                        cl.Action(
-                            name="Download The Transcribed text",
-                            value="Download",
-                            description="Download",
-                        ),
-                        cl.Action(
-                            name="Summarize", value="Summary", description="Summarize"
-                        ),
-                        cl.Action(
-                            name="Translate", value="Translate", description="Translate"
-                        ),
-                        cl.Action(name="Other", value="Other", description="Other"),
-                        cl.Action(name="Exit", value="Exit", description="Exit"),
-                    ],
-                    timeout=cfg.ui_timeout,
-                ).send()
+                res = await summary_and_download()
+                
 
             elif action_summary == True and action_download == False:
                 logger.info("in elif 1")
-                res = await cl.AskActionMessage(
-                    content="What do you want to do from the following?",
-                    actions=[
-                        cl.Action(
-                            name="Download", value="Download", description="Download"
-                        ),
-                        cl.Action(
-                            name="Translate", value="Translate", description="Translate"
-                        ),
-                        cl.Action(name="Other", value="Other", description="Other"),
-                        cl.Action(name="Exit", value="Exit", description="Exit"),
-                    ],
-                    timeout=cfg.ui_timeout,
-                ).send()
+                res = await download_nosummary()
 
             elif action_download == True and action_summary == False:
                 logger.info("in elif 2")
-                res = await cl.AskActionMessage(
-                    content="What do you want to do from the following?",
-                    actions=[
-                        cl.Action(
-                            name="Summarize", value="Summary", description="Summarize"
-                        ),
-                        cl.Action(
-                            name="Translate", value="Translate", description="Translate"
-                        ),
-                        cl.Action(name="Other", value="Other", description="Other"),
-                        cl.Action(name="Exit", value="Exit", description="Exit"),
-                    ],
-                    timeout=cfg.ui_timeout,
-                ).send()
+                res = await nodownload_summary()
 
             else:
                 logger.info("in else")
-                res = await cl.AskActionMessage(
-                    content="What do you want to do from the following?",
-                    actions=[
-                        cl.Action(
-                            name="Translate", value="Translate", description="Translate"
-                        ),
-                        cl.Action(name="Other", value="Other", description="Other"),
-                        cl.Action(name="Exit", value="Exit", description="Exit"),
-                    ],
-                    timeout=cfg.ui_timeout,
-                ).send()
-
-            action = res["value"]
+                res = await nosummary_nodownload()
+            
+            val = value_res(res)
+            if val == True:
+                pass
+            elif val == False:
+                await cl.Message(content="Thank You!").send()
+                break
+            else:
+                action = res["value"]
             if action == "Download":
                 await cl.Message(content="Download Transcibed Text").send()
                 action_download = True
@@ -155,6 +109,88 @@ async def start() -> cl.Message:
                 if answer(download) == "positive":
                     response = await download_text(output)
                     await cl.Message(content=f"{response}").send()
+
+async def value_res(res):
+    logger.info("in else")
+    action = res["value"]
+    if action != None:
+        return action
+    else:
+        is_present = chance()
+        return is_present
+    
+async def chance():
+    for i in range(0,6):
+        present = await ask_user_msg(content="Hi are you there?")
+        if present:
+            return True
+    return False
+
+async def nosummary_nodownload():
+    return await cl.AskActionMessage(
+                    content="What do you want to do from the following?",
+                    actions=[
+                        cl.Action(
+                            name="Translate", value="Translate", description="Translate"
+                        ),
+                        cl.Action(name="Other", value="Other", description="Other"),
+                        cl.Action(name="Exit", value="Exit", description="Exit"),
+                    ],
+                    timeout=cfg.ui_timeout,
+                ).send()
+
+async def nodownload_summary():
+    return await cl.AskActionMessage(
+                    content="What do you want to do from the following?",
+                    actions=[
+                        cl.Action(
+                            name="Summarize", value="Summary", description="Summarize"
+                        ),
+                        cl.Action(
+                            name="Translate", value="Translate", description="Translate"
+                        ),
+                        cl.Action(name="Other", value="Other", description="Other"),
+                        cl.Action(name="Exit", value="Exit", description="Exit"),
+                    ],
+                    timeout=cfg.ui_timeout,
+                ).send()
+
+async def download_nosummary():
+    return await cl.AskActionMessage(
+                    content="What do you want to do from the following?",
+                    actions=[
+                        cl.Action(
+                            name="Download", value="Download", description="Download"
+                        ),
+                        cl.Action(
+                            name="Translate", value="Translate", description="Translate"
+                        ),
+                        cl.Action(name="Other", value="Other", description="Other"),
+                        cl.Action(name="Exit", value="Exit", description="Exit"),
+                    ],
+                    timeout=cfg.ui_timeout,
+                ).send()
+
+async def summary_and_download():
+    return await cl.AskActionMessage(
+                    content="Do you want to do anything from the following?",
+                    actions=[
+                        cl.Action(
+                            name="Download The Transcribed text",
+                            value="Download",
+                            description="Download",
+                        ),
+                        cl.Action(
+                            name="Summarize", value="Summary", description="Summarize"
+                        ),
+                        cl.Action(
+                            name="Translate", value="Translate", description="Translate"
+                        ),
+                        cl.Action(name="Other", value="Other", description="Other"),
+                        cl.Action(name="Exit", value="Exit", description="Exit"),
+                    ],
+                    timeout=cfg.ui_timeout,
+                ).send()
 
 
 async def download_text(file_transcribed):

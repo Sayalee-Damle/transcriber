@@ -10,11 +10,11 @@ import transcriber.backend.tagging_service as ts
 from transcriber.backend.model import ResponseTags
 
 
-async def ask_user_msg(question) -> AskFileResponse:
+async def ask_user_msg(question):
     ans = None
     while ans == None:
         ans = await cl.AskUserMessage(
-            content=f"{question}", timeout=cfg.ui_timeout
+            content=f"{question}", timeout=cfg.ui_timeout, raise_on_timeout= True
         ).send()
     return ans
 
@@ -57,9 +57,11 @@ async def start() -> cl.Message:
                 logger.info("in else")
                 res = await nosummary_nodownload()
             
-            val = value_res(res)
+            val = await value_res(res)
+            logger.info("val: ")
+            logger.info(val)
             if val == True:
-                pass
+                continue
             elif val == False:
                 await cl.Message(content="Thank You!").send()
                 break
@@ -100,6 +102,7 @@ async def start() -> cl.Message:
                 await cl.Message(content="Thank You!").send()
                 break
             else:
+                await cl.Message(content="Other").send()
                 other_action = await ask_user_msg(
                     "What is the action that you want to perform on the transcribed text?"
                 )
@@ -111,20 +114,33 @@ async def start() -> cl.Message:
                     await cl.Message(content=f"{response}").send()
 
 async def value_res(res):
-    logger.info("in else")
-    action = res["value"]
-    if action != None:
+    logger.info("in value res")
+    
+    logger.info(res)
+    if res != None:
+        logger.info("in value res - if")
+        action = res["value"]
         return action
     else:
-        is_present = chance()
+        logger.info("in value res - else")
+        is_present = await chance()
+        logger.info(is_present)
         return is_present
-    
+        
 async def chance():
-    for i in range(0,6):
-        present = await ask_user_msg(content="Hi are you there?")
+    logger.info('in chance')
+    try:
+        present = await ask_user_msg("Hi are you there?")
+        logger.info(present)
         if present:
-            return True
-    return False
+            if answer(present) == "positive":
+                logger.info('in chance - if')
+                return True
+        else:
+            logger.info('in chance - no answer')
+      
+    except:
+        return False
 
 async def nosummary_nodownload():
     return await cl.AskActionMessage(

@@ -26,7 +26,7 @@ def transcribe_from_vid(path: Path) -> dict:
     assert path.exists(), f"path {path} does not exist"
 
     model = whisper.load_model("base")
-    result = model.transcribe(path.as_posix(), fp16=False)
+    result = model.transcribe(path.as_posix(), fp16=False, word_timestamps=True)
     logger.info("in try")
     transcribed_text = result["text"]
     return transcribed_text

@@ -5,9 +5,12 @@ This tool uses Whisper to transcribe videos and audios.
 ## Installation instructions
 
 
-```pip install poetry
-poetry shell
-poetry build
+
+
+```
+conda create -n transcriber python=3.11
+conda activate transcriber
+pip install poetry
 poetry install
 ```
 This creates a specific environment with all the libraries in need!

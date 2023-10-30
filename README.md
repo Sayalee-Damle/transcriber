@@ -17,7 +17,7 @@ This creates a specific environment with all the libraries in need!
 
 
 
-## to start the project
+## To start the project
 ```chainlit run .\transcriber\frontend\main.py```
 
 

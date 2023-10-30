@@ -25,6 +25,7 @@ This creates a specific environment with all the libraries in need!
 
 ## Configuration
 configure the .env file like this:
+
 To specify configurations use .env file
 
 ```
